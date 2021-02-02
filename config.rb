@@ -366,23 +366,31 @@ dato.tap do |dato|
     visible_projects = PresentationHelper.published_projects(dato.projects)
     visible_resource_redirects = PresentationHelper.published_redirects(dato.resource_redirects)
 
-    def paginate_with_fallback(items, index_page, parent_page, locale)
+    def paginate_with_fallback(items, page, parent_page, locale, template="index")
       parent_path = "#{parent_page.slug}/"
-      index_path = index_page.slug.to_s
-      path = "/#{parent_path}#{index_path}"
+      page_path = page.slug.to_s
+      path = "/#{parent_path}#{page_path}"
 
-      if items.any?
+      if items.any? && template == "index"
         paginate items,
                  path,
                  "/templates/index_page.html",
                  suffix: "/page/:num/index",
-                 locals: {page: index_page},
+                 locals: {page: page},
+                 per_page: 10
+
+      elsif items.any? && template == "schedule"
+        paginate items,
+                 path,
+                 "/templates/schedule.html",
+                 suffix: "/page/:num/index",
+                 locals: {page: page},
                  per_page: 10
 
       else
         proxy "#{path}/index.html",
               "/templates/index_page.html",
-              locals: {page: index_page},
+              locals: {page: page},
               locale: locale
       end
     end
@@ -463,6 +471,26 @@ dato.tap do |dato|
                            dato.minister_press_releases_index,
                            dato.minister_page,
                            locale)
+
+    minister_events = dato.schedule_events.sort do |a, b|
+      a.agenda_date <=> b.agenda_date
+    end
+
+    months = (minister_events.each_with_object([]) do |e, arr|
+      arr << e.agenda_date.strftime("%B %Y")
+    end).uniq!
+
+    minister_events_by_month = months.each_with_object({}) do |month, h|
+      h[month] = (minister_events.select do |event|
+        event.agenda_date.strftime("%B %Y") == month
+      end)
+    end
+
+    paginate_with_fallback(minister_events_by_month,
+                           dato.schedule_page,
+                           dato.minister_page,
+                           locale,
+                           "schedule")
 
     PresentationHelper.published_pages(dato.minister_subpages).each do |minister_subpage|
       parent_path = minister_subpage.parent ? "/#{minister_subpage.parent.slug}" : ""
