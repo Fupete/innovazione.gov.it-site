@@ -182,7 +182,6 @@ helpers do
     PresentationHelper.published_schedule_events(dato.schedule_events)
   end
 
-<<<<<<< HEAD
   def current_and_past_events
     visible_schedule_events.reverse.select do |event|
       event.agenda_date <= DateTime.now
@@ -530,6 +529,7 @@ dato.tap do |dato|
                            dato.minister_page,
                            locale)
 
+<<<<<<< HEAD
     visible_schedule_events = dato.schedule_events.sort_by(&:agenda_date)
 
     current_and_future_events = visible_schedule_events.select do |event|
@@ -559,11 +559,29 @@ dato.tap do |dato|
     end
 
     paginate_with_fallback(events_by_month,
+=======
+    minister_events = dato.schedule_events.sort do |a, b|
+      a.agenda_date <=> b.agenda_date
+    end
+
+    months = (minister_events.each_with_object([]) do |e, arr|
+      arr << e.agenda_date.strftime("%B %Y")
+    end).uniq!
+
+    minister_events_by_month = months.each_with_object({}) do |month, h|
+      h[month] = (minister_events.select do |event|
+        event.agenda_date.strftime("%B %Y") == month
+      end)
+    end
+
+    paginate_with_fallback(minister_events_by_month,
+>>>>>>> Add pagination items for agenda in config file
                            dato.schedule_page,
                            dato.minister_page,
                            locale,
                            "schedule")
 
+<<<<<<< HEAD
     archive_events = visible_schedule_events.reverse.select do |event|
       event.agenda_date <= DateTime.now
     end
@@ -596,6 +614,8 @@ dato.tap do |dato|
                            locale,
                            "archive")
 
+=======
+>>>>>>> Add pagination items for agenda in config file
     visible_minister_subpages.each do |minister_subpage|
       parent_path = minister_subpage.parent ? "/#{minister_subpage.parent.slug}" : ""
       proxy "/#{dato.minister_page.slug}#{parent_path}/#{minister_subpage.slug}/index.html",
