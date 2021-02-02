@@ -367,30 +367,22 @@ dato.tap do |dato|
     visible_projects = PresentationHelper.published_projects(dato.projects)
     visible_resource_redirects = PresentationHelper.published_redirects(dato.resource_redirects)
 
-    def paginate_with_fallback(items, page, parent_page, locale, template="index")
+    def paginate_with_fallback(items, page, parent_page, locale, template="index_page")
       parent_path = "#{parent_page.slug}/"
       page_path = page.slug.to_s
       path = "/#{parent_path}#{page_path}"
 
-      if items.any? && template == "index"
+      if items.any?
         paginate items,
                  path,
-                 "/templates/index_page.html",
-                 suffix: "/page/:num/index",
-                 locals: {page: page},
-                 per_page: 10
-
-      elsif items.any? && template == "schedule"
-        paginate items,
-                 path,
-                 "/templates/schedule.html",
+                 "/templates/#{template}.html",
                  suffix: "/page/:num/index",
                  locals: {page: page},
                  per_page: 10
 
       else
         proxy "#{path}/index.html",
-              "/templates/index_page.html",
+              "/templates/#{template}.html",
               locals: {page: page},
               locale: locale
       end
