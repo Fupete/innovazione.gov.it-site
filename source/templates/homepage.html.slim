@@ -1,6 +1,8 @@
 - content_for(:head)
   == proxy_dato_meta_tags(page)
 
+= partial "partials/schedule"
+
 h1.sr-only = dato.homepage.title
 
 - if page.banners.present?
