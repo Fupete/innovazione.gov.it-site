@@ -182,6 +182,7 @@ helpers do
     PresentationHelper.published_schedule_events(dato.schedule_events)
   end
 
+<<<<<<< HEAD
   def current_and_past_events
     visible_schedule_events.reverse.select do |event|
       event.agenda_date <= DateTime.now
@@ -494,6 +495,19 @@ dato.tap do |dato|
           locals: {page: dato.minister_page},
           locale: locale
 
+<<<<<<< HEAD
+=======
+    proxy "/#{dato.schedule_archive_page.slug}/index.html",
+          "/templates/archive.html",
+          locals: {page: dato.schedule_archive_page},
+          locale: locale
+
+    proxy "/#{dato.schedule_page.slug}/index.html",
+          "/templates/schedule.html",
+          locals: {page: dato.schedule_page},
+          locale: locale
+
+>>>>>>> Add helper methods and configuration for schedule archive page
     PresentationHelper.published_schedule_events(dato.schedule_events).each do |schedule_event|
       proxy "/#{dato.minister_page.slug}/#{dato.schedule_page.slug}/#{schedule_event.slug}/index.html",
             "/templates/schedule_event.html",
@@ -582,6 +596,7 @@ dato.tap do |dato|
                            "schedule")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     archive_events = visible_schedule_events.reverse.select do |event|
       event.agenda_date <= DateTime.now
     end
@@ -616,7 +631,41 @@ dato.tap do |dato|
 
 =======
 >>>>>>> Add pagination items for agenda in config file
+=======
+>>>>>>> Add helper methods and configuration for schedule archive page
     visible_minister_subpages.each do |minister_subpage|
+=======
+    archive_events = visible_schedule_events.reverse
+    days_in_archive = (archive_events.each_with_object([]) do |event, daily_arr|
+      daily_arr << event.agenda_date.strftime("%d %B %Y")
+    end)
+    days_in_archive.uniq!
+
+    archive_events_by_day = (days_in_archive.each_with_object({}) do |day, h|
+      h[day] = (archive_events.select do |e|
+        e.agenda_date.strftime("%d %B %Y") == day
+      end)
+    end)
+
+    months_in_archive = (archive_events.each_with_object([]) do |e, arr|
+      arr << e.agenda_date.strftime("%B %Y")
+    end)
+    months_in_archive.uniq!
+
+    archive_events_by_month = months_in_archive.each_with_object({}) do |month, h|
+      h[month] = (archive_events_by_day.select do |k, v|
+        k.downcase.include?(month.downcase)
+      end)
+    end
+
+    paginate_with_fallback(archive_events_by_month,
+                           dato.schedule_archive_page,
+                           dato.minister_page,
+                           locale,
+                           "archive")
+
+    PresentationHelper.published_pages(dato.minister_subpages).each do |minister_subpage|
+>>>>>>> Add helper methods and configuration for schedule archive page
       parent_path = minister_subpage.parent ? "/#{minister_subpage.parent.slug}" : ""
       proxy "/#{dato.minister_page.slug}#{parent_path}/#{minister_subpage.slug}/index.html",
             "/templates/page.html",
