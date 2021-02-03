@@ -56,7 +56,7 @@ ruby:
   .col-lg-6.pt-5.order-first
     .col-lg-8.offset-lg-2
       - if page.featured_projects.present?
-        h3.sr-only In evidenza
+        h3.sr-only = t("projects.highlights")
         = partial "partials/image_text_gallery",
           locals: {slides: page.featured_projects}
 

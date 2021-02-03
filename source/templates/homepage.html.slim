@@ -4,7 +4,7 @@
 h1.sr-only = dato.homepage.title
 
 - if page.banners.present?
-  h2.sr-only Segnalazioni
+  h2.sr-only = t("notes")
   - page.banners.each do |block|
     = partial "partials/blocks/#{block.item_type.api_key}",
       locals: {block: block}
