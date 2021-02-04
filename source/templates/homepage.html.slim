@@ -1,8 +1,6 @@
 - content_for(:head)
   == proxy_dato_meta_tags(page)
 
-= partial "partials/schedule"
-
 h1.sr-only = dato.homepage.title
 
 - if page.banners.present?
@@ -32,6 +30,8 @@ h1.sr-only = dato.homepage.title
 .py-5.lightgrey-bg-a2
   .container
     = partial "partials/card-feature-carousel"
+= partial "partials/schedule"
+
 
 / blocco Focus
 = partial "partials/focus-flag", locals: {items: page.focus_elements}
